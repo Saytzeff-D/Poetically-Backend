@@ -1,6 +1,13 @@
 const { transporter, mailOption } = require("../mailer")
 const pool = require("../pool")
 const jwt = require('jsonwebtoken')
+const cloudinary = require('cloudinary')
+
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+})
 
 const login = (req, res)=>{
     let sql = `SELECT * FROM users WHERE (email = '${req.body.email}' AND password = '${req.body.password}')`
@@ -79,15 +86,21 @@ const profilePicture = (req, res)=>{
     console.log(req.user.user_id)
     const picture = req.body.picture
     const user_id = req.user.user_id
-    const sql = `UPDATE users SET picture = '${picture}' WHERE user_id = '${user_id}'`
-    pool.query(sql, (err, result)=>{
-        if(err){
-            console.log(err)
-            res.status(300).json({status: false, message: 'Internal Server Error'})
-        }else{
-            pool.query(`SELECT * FROM users WHERE user_id = '${user_id}'`, (err, user)=>{
-                res.status(200).json({status: true, message: 'Profile Picture Uploaded Successfully', user: user[0]})
-            })
+    cloudinary.v2.uploader.upload(picture, { folder: 'Poetically-Me' }, (err, result)=>{
+        if (!err) {
+            const sql = `UPDATE users SET picture = '${result.secure_url}' WHERE user_id = '${user_id}'`
+            pool.query(sql, (err, result)=>{
+                if(err){
+                    console.log(err)
+                    res.status(300).json({status: false, message: 'Internal Server Error'})
+                }else{
+                    pool.query(`SELECT * FROM users WHERE user_id = '${user_id}'`, (err, user)=>{
+                        res.status(200).json({status: true, message: 'Profile Picture Uploaded Successfully', user: user[0]})
+                    })
+                }
+            })            
+        } else {
+            
         }
     })
 }
