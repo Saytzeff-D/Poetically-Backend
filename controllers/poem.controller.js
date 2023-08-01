@@ -6,4 +6,25 @@ cloudinary.config({
     api_secret: process.env.API_SECRET
 })
 
-cloudinary.v2.uploader.upload('jjjjfjf', {public_id: 'me', folder: ''})
+const uploadPoem = (req, res)=>{
+    console.log(req.user.user_id, req.body.title)
+    const user = req.user
+    const poem = req.body
+    cloudinary.v2.uploader.upload(poem.bookFile, { folder: 'Poetically-Me' }, (err, bookFile)=>{
+        if (!err) {
+            poem.bookFile = bookFile.secure_url
+            cloudinary.v2.uploader.upload(poem.coverImage, { folder: 'Poetically-Me' }, (err, coverImg)=>{
+                if (!err) {
+                    poem.coverImage = coverImg.secure_url
+                    // Insert into the database
+                } else {
+                    res.status(500).json({message: 'Internal Server Error'})
+                }
+            })
+        } else {
+            res.status(500).json({message: 'Internal Server Error'})
+        }
+    })
+}
+
+module.exports = { uploadPoem }
