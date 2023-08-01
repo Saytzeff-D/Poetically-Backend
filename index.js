@@ -5,10 +5,12 @@ const cors = require('cors')
 const bodyParser = require('body-parser');
 const pool = require('./pool');
 const userRouter = require('./routes/user.route');
+const PoemRouter = require('./routes/poem.route');
 app.use(cors({origin: '*'}))
 app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}))
 app.use(bodyParser.json({limit:'50mb'}));
 app.use('/user', userRouter)
+app.use('/poem', PoemRouter)
 
 app.get('/', (req, res)=>{
     res.send('Poetically-Me Server is now live')
