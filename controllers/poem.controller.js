@@ -8,7 +8,6 @@ cloudinary.config({
 })
 
 const uploadPoem = (req, res)=>{
-    // console.log(req.user.user_id, req.body.title)
     const user = req.user
     const poem = req.body
     cloudinary.v2.uploader.upload(poem.bookFile, { folder: 'Poetically-Me', resource_type: 'auto' }, (err, bookFile)=>{
@@ -47,5 +46,18 @@ const myPoems = (req, res)=>{
         }
     })
 }
+const setVisibility = (req, res)=>{
+    let payload = req.body
+    const values = [payload.releaseDate, payload.baseCurrency, payload.price, payload.visibility, req.user.user_id]
+    let sql = `UPDATE poems SET releaseDate = ?, baseCurrency = ?, price = ?, visibility = ? WHERE user_id = ?`;
+    pool.query(sql, values, (err, result)=>{
+        if (!err) {
+            res.status(200).json({status: true})
+        } else {
+            console.log(err)
+            res.status(200).json({status: false})
+        }
+    })
+}
 
-module.exports = { uploadPoem, myPoems }
+module.exports = { uploadPoem, myPoems, setVisibility }
