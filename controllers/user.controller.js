@@ -24,23 +24,8 @@ const login = (req, res)=>{
         }
     })
 }
-const validateEmail = (req, res)=>{
-    let sql = `SELECT * FROM users WHERE (email = '${req.body.email}')`
-    pool.query(sql, (err, result)=>{
-        if(err){
-            console.log(err)
-            res.status(300).json({message: 'Internal Server Error'})
-        }else {
-            if (result.length == 0) {
-                res.status(200).json({status: true})
-            } else {
-                res.status(200).json({status: false, message: 'Email already registered'})
-            }
-        }
-    })
-}
 const register = (req, res)=>{
-    const email = req.body.email
+    const email = req.body.email    
     let referralCode = Math.random().toString(36).substr(2, 8)
     let verificationCode = Math.floor(Math.random()*1000000)
     let sql = `INSERT INTO 
@@ -105,4 +90,4 @@ const profilePicture = (req, res)=>{
     })
 }
 
-module.exports = { login, register, verifyEmail, currentUser, validateEmail, profilePicture }
+module.exports = { login, register, verifyEmail, currentUser, profilePicture }
