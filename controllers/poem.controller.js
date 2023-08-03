@@ -59,5 +59,16 @@ const setVisibility = (req, res)=>{
         }
     })
 }
+const myShop = (req, res)=>{
+    const payload = req.user
+    let sql = `SELECT * FROM poems WHERE user_id = ? AND (visibility = 'Everybody' OR visibility = 'Users Only')`
+    pool.query(sql, [payload.user_id], (err, result)=>{
+        if (!err) {
+            res.status(200).json({shop: result})
+        } else {
+            res.status(500).json({message: 'Internal Server Error'})
+        }
+    })
+}
 
-module.exports = { uploadPoem, myPoems, setVisibility }
+module.exports = { uploadPoem, myPoems, setVisibility, myShop }
