@@ -70,5 +70,15 @@ const myShop = (req, res)=>{
         }
     })
 }
+const topPoems = (req, res)=>{
+    let sql = `SELECT * FROM poems WHERE visibility = 'Everybody' OR visibility = 'Users Only'`
+    pool.query(sql, (err, result)=>{
+        if (!err) {
+            res.status(200).json({poems: result})
+        } else {
+            res.status(500).json({message: 'Internal Server Error'})
+        }
+    })
+}
 
-module.exports = { uploadPoem, myPoems, setVisibility, myShop }
+module.exports = { uploadPoem, myPoems, setVisibility, myShop, topPoems }
