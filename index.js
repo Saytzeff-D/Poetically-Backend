@@ -7,12 +7,16 @@ const pool = require('./pool');
 const userRouter = require('./routes/user.route');
 const PoemRouter = require('./routes/poem.route');
 const ReferralRouter = require('./routes/referral.route');
+const TransactionRouter = require('./routes/transaction.route');
+const CurrencyRouter = require('./routes/currency.route');
 app.use(cors({origin: '*'}))
 app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}))
 app.use(bodyParser.json({limit:'50mb'}));
 app.use('/user', userRouter)
 app.use('/poem', PoemRouter)
 app.use('/referral', ReferralRouter)
+app.use('/transaction', TransactionRouter)
+app.use('/currency', CurrencyRouter)
 
 app.get('/', (req, res)=>{
     res.send('Poetically-Me Server is now live')
