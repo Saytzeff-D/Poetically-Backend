@@ -48,8 +48,8 @@ const myPoems = (req, res)=>{
 }
 const setVisibility = (req, res)=>{
     let payload = req.body
-    const values = [payload.releaseDate, payload.baseCurrency, payload.price, payload.visibility, req.user.user_id]
-    let sql = `UPDATE poems SET releaseDate = ?, baseCurrency = ?, price = ?, visibility = ? WHERE user_id = ?`;
+    const values = [payload.releaseDate, payload.baseCurrency, payload.price, payload.visibility, payload.poem_id]
+    let sql = `UPDATE poems SET releaseDate = ?, baseCurrency = ?, price = ?, visibility = ? WHERE poem_id = ?`;
     pool.query(sql, values, (err, result)=>{
         if (!err) {
             res.status(200).json({status: true})
