@@ -13,7 +13,7 @@ const myLibrary = (req, res)=>{
 }
 const addToLibrary = (req, res)=>{
     const payload = req.body
-    let sql = `INSERT INTO library (poem_id, reader_id) VALUES('${payload.poem_id}', '${payload.user_id}')`
+    let sql = `INSERT INTO library (poem_id, reader_id) VALUES('${payload.poem_id}', '${payload.reader_id}')`
     pool.query(sql, (err, result)=>{
         if (!err) {
             res.status(200).json({message: 'Success'})
