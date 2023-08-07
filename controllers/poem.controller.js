@@ -16,15 +16,18 @@ const uploadPoem = (req, res)=>{
             cloudinary.v2.uploader.upload(poem.coverImage, { folder: 'Poetically-Me'}, (err, coverImg)=>{
                 if (!err) {                    
                     poem.coverImage = coverImg.secure_url
+                    const values = [poem.title, poem.poet, poem.poem_desc, poem.category, poem.lang, poem.explicitContent, poem.publisherName, poem.ISBN, poem.publicationDate, poem.bookFile, poem.coverImage, user.user_id]
                     // Insert into the database
                     let sql = `
-                    INSERT INTO poems (title, poet, poem_desc, category, lang, explicitContent, publisherName, ISBN, publicationDate, bookFile, coverImage, user_id) VALUES ('${poem.title}', '${poem.poet}', '${poem.poem_desc}', '${poem.category}', '${poem.lang}', '${poem.explicitContent}', '${poem.publisherName}', '${poem.ISBN}', '${poem.publicationDate}', '${poem.bookFile}', '${poem.coverImage}', '${user.user_id}')
+                        INSERT INTO 
+                            poems (title, poet, poem_desc, category, lang, explicitContent, publisherName, ISBN, publicationDate, bookFile, coverImage, user_id) 
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     `
-                    pool.query(sql, (err, result)=>{
+                    pool.query(sql, values, (err, result)=>{
                         if (!err) {
                             res.status(200).json({status: true})
                         } else {
-                           res.status(200).json({status: false})
+                           res.status(200).json({status: false, err})
                         }
                     })
                 } else {
@@ -46,30 +49,6 @@ const myPoems = (req, res)=>{
         }
     })
 }
-const setVisibility = (req, res)=>{
-    let payload = req.body
-    const values = [payload.releaseDate, payload.baseCurrency, payload.price, payload.visibility, payload.poem_id]
-    let sql = `UPDATE poems SET releaseDate = ?, baseCurrency = ?, price = ?, visibility = ? WHERE poem_id = ?`;
-    pool.query(sql, values, (err, result)=>{
-        if (!err) {
-            res.status(200).json({status: true})
-        } else {
-            console.log(err)
-            res.status(200).json({status: false})
-        }
-    })
-}
-const myShop = (req, res)=>{
-    const payload = req.user
-    let sql = `SELECT * FROM poems WHERE user_id = ? AND (visibility = 'Everybody' OR visibility = 'Users Only')`
-    pool.query(sql, [payload.user_id], (err, result)=>{
-        if (!err) {
-            res.status(200).json({shop: result})
-        } else {
-            res.status(500).json({message: 'Internal Server Error'})
-        }
-    })
-}
 const topPoems = (req, res)=>{
     let sql = `SELECT * FROM poems WHERE visibility = 'Everybody' OR visibility = 'Users Only'`
     pool.query(sql, (err, result)=>{
@@ -81,4 +60,4 @@ const topPoems = (req, res)=>{
     })
 }
 
-module.exports = { uploadPoem, myPoems, setVisibility, myShop, topPoems }
+module.exports = { uploadPoem, myPoems, topPoems }

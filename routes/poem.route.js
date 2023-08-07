@@ -5,8 +5,6 @@ const PoemRouter = express.Router()
 
 PoemRouter.post('/upload', authJWT, uploadPoem)
 PoemRouter.get('/my-poems', authJWT, myPoems)
-PoemRouter.put('/setVisibility', authJWT, setVisibility)
-PoemRouter.get('/my-shop', authJWT, myShop)
 PoemRouter.get('/top-poems', topPoems)
 
 module.exports = PoemRouter
