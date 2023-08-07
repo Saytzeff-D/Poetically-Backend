@@ -10,10 +10,10 @@ cloudinary.config({
 const uploadPoem = (req, res)=>{
     const user = req.user
     const poem = req.body
-    cloudinary.v2.uploader.upload(poem.bookFile, { folder: 'Poetically-Me', resource_type: 'auto' }, (err, bookFile)=>{
+    cloudinary.v2.uploader.upload(poem.bookFile, { folder: 'Poetically-Me', use_filename: true,  resource_type: 'raw' }, (err, bookFile)=>{
         if (!err) {            
             poem.bookFile = bookFile.secure_url
-            cloudinary.v2.uploader.upload(poem.coverImage, { folder: 'Poetically-Me' }, (err, coverImg)=>{
+            cloudinary.v2.uploader.upload(poem.coverImage, { folder: 'Poetically-Me'}, (err, coverImg)=>{
                 if (!err) {                    
                     poem.coverImage = coverImg.secure_url
                     // Insert into the database
@@ -28,11 +28,11 @@ const uploadPoem = (req, res)=>{
                         }
                     })
                 } else {
-                    res.status(500).json({message: 'Internal Server Error'})
+                    res.status(500).json({message: 'Internal Server Error', err})
                 }
             })
         } else {
-            res.status(500).json({message: 'Internal Server Error'})
+            res.status(500).json({message: 'Internal Server Error', err})
         }
     })
 }
